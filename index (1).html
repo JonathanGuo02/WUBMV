@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You 💕</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(180deg, 
+                #1a0a10 0%, 
+                #2d0f1a 20%, 
+                #3d1224 40%,
+                #4a1a2e 60%,
+                #3d1224 80%,
+                #2d0f1a 100%);
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating hearts throughout the page */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .floating-heart {
+            position: absolute;
+            opacity: 0.12;
+            animation: float-drift 20s infinite ease-in-out;
+            color: #ff6b8a;
+        }
+
+        @keyframes float-drift {
+            0%, 100% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.12;
+            }
+            90% {
+                opacity: 0.12;
+            }
+            100% {
+                transform: translateY(-100px) translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Sections */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            padding: 4rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: radial-gradient(ellipse at center, rgba(255, 107, 138, 0.08) 0%, transparent 70%);
+        }
+
+        .hero-hearts {
+            font-size: 3rem;
+            letter-spacing: 1rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-out 0.5s forwards;
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4rem;
+            font-weight: 400;
+            font-style: italic;
+            color: #ffc0cb;
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-out 1s forwards;
+            text-shadow: 0 0 40px rgba(255, 192, 203, 0.3);
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-out 2s forwards, bounce 2s ease-in-out 3s infinite;
+        }
+
+        .scroll-hint span {
+            font-size: 0.8rem;
+            letter-spacing: 0.2rem;
+            text-transform: uppercase;
+            color: rgba(255, 192, 203, 0.6);
+        }
+
+        .scroll-hint .arrow {
+            font-size: 1.5rem;
+            color: #ff6b8a;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Message sections */
+        .message-section {
+            background: radial-gradient(ellipse at center, rgba(255, 107, 138, 0.05) 0%, transparent 70%);
+        }
+
+        .message-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            text-align: center;
+            max-width: 700px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s ease-out;
+        }
+
+        .message-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .message-text em {
+            color: #ffb6c1;
+            font-style: italic;
+        }
+
+        .heart-divider {
+            margin: 2rem 0;
+            font-size: 1.5rem;
+            color: #ff6b8a;
+            opacity: 0.6;
+            letter-spacing: 1rem;
+        }
+
+        /* Photo Section */
+        .photo-section {
+            min-height: 120vh;
+            background: radial-gradient(ellipse at center, rgba(255, 107, 138, 0.1) 0%, transparent 60%);
+        }
+
+        .photo-container {
+            position: relative;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 1.2s ease-out;
+        }
+
+        .photo-container.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .photo-frame {
+            position: relative;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff6b8a, #ff8fa3, #ffb6c1, #ff8fa3, #ff6b8a);
+            border-radius: 20px;
+            box-shadow: 
+                0 0 60px rgba(255, 107, 138, 0.4),
+                0 30px 80px rgba(0, 0, 0, 0.4);
+        }
+
+        .photo-frame::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(135deg, #ff6b8a, #ffb6c1, #ff6b8a);
+            border-radius: 22px;
+            z-index: -1;
+            opacity: 0.5;
+            filter: blur(10px);
+        }
+
+        .photo-frame img {
+            display: block;
+            max-width: 350px;
+            width: 100%;
+            border-radius: 12px;
+        }
+
+        .corner-heart {
+            position: absolute;
+            font-size: 1.8rem;
+            filter: drop-shadow(0 0 10px rgba(255, 107, 138, 0.8));
+        }
+
+        .corner-heart.top-left { top: -15px; left: -15px; }
+        .corner-heart.top-right { top: -15px; right: -15px; }
+        .corner-heart.bottom-left { bottom: -15px; left: -15px; }
+        .corner-heart.bottom-right { bottom: -15px; right: -15px; }
+
+        .photo-caption {
+            margin-top: 2rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-style: italic;
+            color: #ffb6c1;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s ease-out 0.5s;
+        }
+
+        .photo-container.visible .photo-caption {
+            opacity: 1;
+        }
+
+        /* Question Section */
+        .question-section {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at center, rgba(255, 107, 138, 0.12) 0%, transparent 60%);
+        }
+
+        .question-container {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s ease-out;
+        }
+
+        .question-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .question-pretext {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 0.3rem;
+            text-transform: uppercase;
+            color: rgba(255, 182, 193, 0.7);
+            margin-bottom: 1.5rem;
+        }
+
+        .question-main {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5rem;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 60px rgba(255, 107, 138, 0.5);
+        }
+
+        .question-highlight {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4rem;
+            font-weight: 600;
+            font-style: italic;
+            background: linear-gradient(135deg, #ff6b8a, #ffb6c1, #ff8fa3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            animation: pulse-text 3s ease-in-out infinite;
+        }
+
+        .question-note {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            color: rgba(255, 182, 193, 0.7);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+        }
+
+        @keyframes pulse-text {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+
+        .buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            min-height: 80px;
+        }
+
+        button {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.15rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .yes-btn {
+            padding: 1.2rem 3.5rem;
+            background: linear-gradient(135deg, #ff6b8a, #ff8fa3);
+            color: white;
+            box-shadow: 
+                0 4px 25px rgba(255, 107, 138, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+        }
+
+        .yes-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 
+                0 8px 40px rgba(255, 107, 138, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .no-btn {
+            padding: 1rem 2.5rem;
+            background: transparent;
+            color: rgba(255, 182, 193, 0.5);
+            border: 1px solid rgba(255, 182, 193, 0.3);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        /* Celebration overlay */
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .confetti {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .heart-confetti {
+            font-size: 1.8rem;
+        }
+
+        /* Success Section */
+        .success-section {
+            display: none;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at center, rgba(255, 107, 138, 0.15) 0%, transparent 60%);
+        }
+
+        .success-section.visible {
+            display: flex;
+        }
+
+        .success-container {
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .success-hearts {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .success-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5rem;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 60px rgba(255, 107, 138, 0.5);
+        }
+
+        .success-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-style: italic;
+            color: #ffb6c1;
+            margin-bottom: 2rem;
+        }
+
+        .success-emoji {
+            font-size: 6rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+
+            .message-text {
+                font-size: 1.8rem;
+                padding: 0 1rem;
+            }
+
+            .photo-frame img {
+                max-width: 280px;
+            }
+
+            .question-main {
+                font-size: 2.5rem;
+            }
+
+            .question-highlight {
+                font-size: 3rem;
+            }
+
+            .buttons {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .success-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Music Control Button */
+        .music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255, 107, 138, 0.3);
+            border: 1px solid rgba(255, 182, 193, 0.4);
+            color: #ffb6c1;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .music-btn:hover {
+            background: rgba(255, 107, 138, 0.5);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+        <source src="Daniel Caesar - Who Knows (Official Lyric Video).mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Music Control Button -->
+    <button class="music-btn" id="musicBtn" onclick="toggleMusic()">🔇 Play Music</button>
+
+    <!-- Floating background hearts -->
+    <div class="floating-hearts" id="floatingHearts"></div>
+
+    <!-- Celebration confetti container -->
+    <div class="celebration" id="celebration"></div>
+
+    <!-- Main content wrapper -->
+    <div id="mainContent">
+        <!-- Section 1: Hero -->
+        <section class="hero">
+            <div class="hero-hearts">💕 💗 💕</div>
+            <h1>Hey You ✨</h1>
+            <div class="scroll-hint">
+                <span>Scroll down</span>
+                <div class="arrow">♡</div>
+            </div>
+        </section>
+
+        <!-- Section 2: First Message -->
+        <section class="message-section">
+            <p class="message-text" data-animate>
+                I know the first time I asked<br>
+                <em>wasn't right</em>...
+            </p>
+        </section>
+
+        <!-- Section 3: Second Message -->
+        <section class="message-section">
+            <p class="message-text" data-animate>
+                So I made you this site<br>
+                so that you wouldn't <em>bite</em> (me) 😅
+            </p>
+            <div class="heart-divider">♡ ♡ ♡</div>
+        </section>
+
+        <!-- Section 4: Photo -->
+        <section class="photo-section">
+            <div class="photo-container" data-animate>
+                <div class="photo-frame">
+                    <span class="corner-heart top-left">💗</span>
+                    <span class="corner-heart top-right">💗</span>
+                    <span class="corner-heart bottom-left">💗</span>
+                    <span class="corner-heart bottom-right">💗</span>
+                    <img src="IMG_6152.png" alt="You">
+                </div>
+                <p class="photo-caption">The most beautiful girl in the world 💕</p>
+            </div>
+        </section>
+
+        <!-- Section 5: Third Message -->
+        <section class="message-section">
+            <p class="message-text" data-animate>
+                Your laugh is <em>contagious</em><br>
+                and smile so bright...
+            </p>
+            <div class="heart-divider">💕</div>
+        </section>
+
+        <!-- Section 6: The Question -->
+        <section class="question-section">
+            <div class="question-container" data-animate>
+                <h2 class="question-main">Will you be my</h2>
+                <h2 class="question-highlight">Valentine tonight? 💕</h2>
+                <p class="question-note">(and for Valentine's Day ofc lol)</p>
+                
+                <div class="buttons">
+                    <button class="yes-btn" onclick="sayYes()">Yes! 💖</button>
+                    <button class="no-btn" id="noBtn" onmouseover="escapeButton()" onclick="escapeButton()">No</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Success Section -->
+    <section class="success-section" id="successSection">
+        <div class="success-container">
+            <div class="success-hearts">💕 💖 💕</div>
+            <h2 class="success-title">You just made me<br>the happiest! 🥰</h2>
+            <p class="success-subtitle">I can't wait to spend Valentine's Day with you!</p>
+            <div class="success-emoji">💕</div>
+        </div>
+    </section>
+
+    <script>
+        // Create floating background hearts
+        function createFloatingHearts() {
+            const container = document.getElementById('floatingHearts');
+            const hearts = ['💕', '💖', '💗', '💓', '💝', '♡', '❤️'];
+            
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.fontSize = (1 + Math.random() * 1.5) + 'rem';
+                heart.style.animationDelay = Math.random() * 20 + 's';
+                heart.style.animationDuration = (18 + Math.random() * 12) + 's';
+                container.appendChild(heart);
+            }
+        }
+
+        // Scroll animations
+        function handleScrollAnimations() {
+            const elements = document.querySelectorAll('[data-animate]');
+            
+            elements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                
+                if (rect.top < windowHeight * 0.75) {
+                    el.classList.add('visible');
+                }
+            });
+        }
+
+        // Escape button logic
+        const noBtn = document.getElementById('noBtn');
+        let escapeCount = 0;
+        const escapeMessages = [
+            "Nope 😏",
+            "Try again 💨",
+            "Can't catch me 😜",
+            "Nice try 🏃‍♀️",
+            "Not today 💕",
+            "Just say yes 🥺",
+            "Please? 💖",
+            "I'll keep running 💗"
+        ];
+
+        function escapeButton() {
+            escapeCount++;
+            
+            noBtn.textContent = escapeMessages[Math.min(escapeCount - 1, escapeMessages.length - 1)];
+            
+            const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+            const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+            
+            const newX = Math.max(20, Math.random() * maxX);
+            const newY = Math.max(20, Math.random() * maxY);
+            
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = newX + 'px';
+            noBtn.style.top = newY + 'px';
+            noBtn.style.zIndex = '100';
+            noBtn.style.transition = 'all 0.15s ease-out';
+            
+            if (escapeCount > 5) {
+                noBtn.style.transform = `scale(${Math.max(0.5, 1 - escapeCount * 0.05)})`;
+                noBtn.style.opacity = Math.max(0.3, 1 - escapeCount * 0.08);
+            }
+        }
+
+        // Celebration confetti
+        function createConfetti() {
+            const celebration = document.getElementById('celebration');
+            const colors = ['#ff6b8a', '#ff8fa3', '#ffb6c1', '#ffc0cb', '#fff', '#ff4d6d'];
+            const hearts = ['💕', '💖', '💗', '💓', '💝', '❤️', '💘', '💞', '♡'];
+            
+            for (let i = 0; i < 120; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    
+                    if (Math.random() > 0.4) {
+                        confetti.className += ' heart-confetti';
+                        confetti.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                    } else {
+                        confetti.style.width = (8 + Math.random() * 8) + 'px';
+                        confetti.style.height = confetti.style.width;
+                        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                    }
+                    
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-20px';
+                    
+                    celebration.appendChild(confetti);
+                    
+                    const fallDuration = 3500 + Math.random() * 2500;
+                    const horizontalDrift = (Math.random() - 0.5) * 300;
+                    
+                    confetti.animate([
+                        { 
+                            transform: 'translateY(0) rotate(0deg)', 
+                            opacity: 1 
+                        },
+                        { 
+                            transform: `translateY(${window.innerHeight + 50}px) translateX(${horizontalDrift}px) rotate(${Math.random() * 1080}deg)`, 
+                            opacity: 0.9
+                        }
+                    ], {
+                        duration: fallDuration,
+                        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                    });
+                    
+                    setTimeout(() => confetti.remove(), fallDuration);
+                }, i * 25);
+            }
+        }
+
+        // Yes button click
+        function sayYes() {
+            document.getElementById('mainContent').classList.add('hidden');
+            const successSection = document.getElementById('successSection');
+            successSection.classList.add('visible');
+            
+            noBtn.style.display = 'none';
+            
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            
+            createConfetti();
+            setTimeout(createConfetti, 2500);
+            setTimeout(createConfetti, 5000);
+        }
+
+        // Initialize
+        createFloatingHearts();
+        window.addEventListener('scroll', handleScrollAnimations);
+        handleScrollAnimations(); // Check on load
+
+        // Music Control
+        const bgMusic = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicBtn.textContent = '🔇 Play Music';
+                isPlaying = false;
+            } else {
+                bgMusic.play();
+                musicBtn.textContent = '🔊 Pause';
+                isPlaying = true;
+            }
+        }
+    </script>
+</body>
+</html>
